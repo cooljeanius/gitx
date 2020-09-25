@@ -17,14 +17,14 @@
 
 - (id)initWithRepository:(PBGitRepository*)theRepository displayDefault:(BOOL)displayDefault
 {
-	if(self = [self initWithWindowNibName:@"RepositoryWindow"])
+	if (self = [self initWithWindowNibName:@"RepositoryWindow"])
 	{
 		self.repository = theRepository;
 		[self showWindow:nil];
 	}
 	
 	if (displayDefault) {
-		self.selectedViewIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"selectedViewIndex"];
+		self.selectedViewIndex = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"selectedViewIndex"];
 	} else {
 		self.selectedViewIndex = -1;
 	}
@@ -66,7 +66,7 @@
 	}
 
 	// Set our default here because we might have changed it (based on bare repo) before
-	selectedViewIndex = whichViewTag;
+	selectedViewIndex = (int)whichViewTag;
 	[[NSUserDefaults standardUserDefaults] setInteger:whichViewTag forKey:@"selectedViewIndex"];
 
 	switch (whichViewTag)

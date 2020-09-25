@@ -11,7 +11,11 @@
 
 @class PBViewController;
 @interface PBGitWindowController : NSWindowController {
+#if __has_feature(objc_arc) || __has_feature(objc_arc_weak)
+    PBGitRepository* repository;
+#else /* GC: */
 	__weak PBGitRepository* repository;
+#endif
 	int selectedViewIndex;
 	IBOutlet NSView* contentView;
 
@@ -21,7 +25,11 @@
 	PBViewController* viewController;
 }
 
+#if __has_feature(objc_arc) || __has_feature(objc_arc_weak)
+@property (assign) PBGitRepository *repository;
+#else /* GC: */
 @property (assign) __weak PBGitRepository *repository;
+#endif
 @property (readonly) NSViewController *viewController;
 @property (assign) int selectedViewIndex;
 

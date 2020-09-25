@@ -199,11 +199,11 @@
 - (void)discardChangesForFiles:(NSArray *)files force:(BOOL)force
 {
 	if (!force) {
-		int ret = [[NSAlert alertWithMessageText:@"Discard changes"
-								   defaultButton:nil
-								 alternateButton:@"Cancel"
-									 otherButton:nil
-					   informativeTextWithFormat:@"Are you sure you wish to discard the changes to this file?\n\nYou cannot undo this operation."] runModal];
+		NSModalResponse ret = [[NSAlert alertWithMessageText:@"Discard changes"
+                                               defaultButton:nil
+                                             alternateButton:@"Cancel"
+                                                 otherButton:nil
+                                   informativeTextWithFormat:@"Are you sure you wish to discard the changes to this file?\n\nYou cannot undo this operation."] runModal];
 		if (ret != NSAlertDefaultReturn)
 			return;
 	}

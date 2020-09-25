@@ -135,15 +135,15 @@
 		return [NSString stringWithFormat:@"This is a tree with path %@", [self fullPath]];
 
 	if ([self hasBinaryAttributes])
-		return [NSString stringWithFormat:@"%@ appears to be a binary file of %d bytes", [self fullPath], [self fileSize]];
+        return [NSString stringWithFormat:@"%@ appears to be a binary file of %lld bytes", [self fullPath], [self fileSize]];
 
 	if ([self fileSize] > 52428800) // ~50MB
-		return [NSString stringWithFormat:@"%@ is too big to be displayed (%d bytes)", [self fullPath], [self fileSize]];
+        return [NSString stringWithFormat:@"%@ is too big to be displayed (%lld bytes)", [self fullPath], [self fileSize]];
 
 	NSString* contents = [self contents];
 
 	if ([self hasBinaryHeader:contents])
-		return [NSString stringWithFormat:@"%@ appears to be a binary file of %d bytes", [self fullPath], [self fileSize]];
+        return [NSString stringWithFormat:@"%@ appears to be a binary file of %lld bytes", [self fullPath], [self fileSize]];
 
 	return contents;
 }

@@ -19,8 +19,9 @@
 
 - (void)awakeFromNib
 {
-	self.selectedTab = [[NSUserDefaults standardUserDefaults] integerForKey:@"Repository Window Selected Tab Index"];;
-	[commitController addObserver:self forKeyPath:@"selection" options:(NSKeyValueObservingOptionNew,NSKeyValueObservingOptionOld) context:@"commitChange"];
+	self.selectedTab = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"Repository Window Selected Tab Index"];
+    // bitwise or-ing is what you're supposed to do with enums used as bitflags like this, right?
+	[commitController addObserver:self forKeyPath:@"selection" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:@"commitChange"];
 	[treeController addObserver:self forKeyPath:@"selection" options:0 context:@"treeChange"];
 	[repository addObserver:self forKeyPath:@"currentBranch" options:0 context:@"branchChange"];
 	NSSize cellSpacing = [commitList intercellSpacing];
@@ -190,7 +191,7 @@
 	NSPredicate* selection = [NSPredicate predicateWithFormat:@"realSha == %@", commit];
 	NSArray* selectedCommits = [repository.revisionList.commits filteredArrayUsingPredicate:selection];
 	[commitController setSelectedObjects: selectedCommits];
-	int index = [[commitController selectionIndexes] firstIndex];
+	NSUInteger index = [[commitController selectionIndexes] firstIndex];
 	[commitList scrollRowToVisible: index];
 }
 
@@ -302,7 +303,7 @@
 }
 
 - (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex {
-	int index = [[splitView subviews] indexOfObject:subview];
+	NSUInteger index = [[splitView subviews] indexOfObject:subview];
 	// this method (and canCollapse) are called by the splitView to decide how to collapse on double-click
 	// we compare our two subviews, so that always the smaller one is collapsed.
 	if([[[splitView subviews] objectAtIndex:index] frame].size.height < [[[splitView subviews] objectAtIndex:((index+1)%2)] frame].size.height) {

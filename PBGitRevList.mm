@@ -13,7 +13,21 @@
 #import "PBGitRevSpecifier.h"
 
 #include "git/oid.h"
-#include <ext/stdio_filebuf.h>
+#if __has_include(<ext/stdio_filebuf.h>)
+# include <ext/stdio_filebuf.h>
+#else
+# if __has_include(<stdio_filebuf.h>)
+#  include <stdio_filebuf.h>
+# else
+#  if __has_include(<cstdio_filebuf>)
+#   include <cstdio_filebuf>
+#  else
+#   if defined(__GNUC__) && !defined(__STRICT_ANSI__)
+#    warning "PBGitRevList.mm wants a header for stdio_filebuf"
+#   endif
+#  endif
+# endif
+#endif
 #include <iostream>
 #include <string>
 #include <map>
@@ -93,8 +107,13 @@ using namespace std;
 	NSFileHandle* handle = [task.standardOutput fileHandleForReading];
 	
 	int fd = [handle fileDescriptor];
+#if defined(_STDIO_FILEBUF_H) && defined(__GNUC__) && defined(_GLIBCXX_USE_DEPRECATED)
 	__gnu_cxx::stdio_filebuf<char> buf(fd, std::ios::in);
-	std::istream stream(&buf);
+    std::istream stream(&buf);
+#else
+    std::istream stream(NULL);
+    (void)fd;
+#endif
 
 	int num = 0;
 	while (true) {
@@ -148,17 +167,17 @@ using namespace std;
 		if (parentString.size() != 0)
 		{
 			if (((parentString.size() + 1) % 41) != 0) {
-				NSLog(@"invalid parents: %i", parentString.size());
+				NSLog(@"invalid parents: %i", (int)parentString.size());
 				continue;
 			}
-			int nParents = (parentString.size() + 1) / 41;
+			size_t nParents = ((parentString.size() + 1) / 41);
 			git_oid *parents = (git_oid *)malloc(sizeof(git_oid) * nParents);
 			int parentIndex;
 			for (parentIndex = 0; parentIndex < nParents; ++parentIndex)
 				git_oid_mkstr(parents + parentIndex, parentString.substr(parentIndex * 41, 40).c_str());
 			
 			newCommit.parentShas = parents;
-			newCommit.nParents = nParents;
+			newCommit.nParents = (int)nParents;
 		}
 
 		int time;

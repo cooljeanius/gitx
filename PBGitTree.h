@@ -15,7 +15,11 @@
 	NSString* sha;
 	NSString* path;
 	PBGitRepository* repository;
+#if __has_feature(objc_arc) || __has_feature(objc_arc_weak)
+    PBGitTree* parent;
+#else /* GC: */
 	__weak PBGitTree* parent;
+#endif
 	NSArray* children;
 	BOOL leaf;
 
@@ -34,7 +38,11 @@
 @property(copy) NSString* path;
 @property(assign) BOOL leaf;
 @property(retain) PBGitRepository* repository;
+#if __has_feature(objc_arc) || __has_feature(objc_arc_weak)
+@property(assign) PBGitTree* parent;
+#else /* GC: */
 @property(assign) __weak PBGitTree* parent;
+#endif
 
 @property(readonly) NSArray* children;
 @property(readonly) NSString* fullPath;

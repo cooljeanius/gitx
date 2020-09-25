@@ -113,7 +113,9 @@
 	NSFileHandle* handle = [task.standardOutput fileHandleForReading];
 	
 	[task launch];
-#warning This can cause a "Bad file descriptor"... when?
+#if defined(__GNUC__) && !defined(__STRICT_ANSI__)
+# warning This can cause a "Bad file descriptor"... when?
+#endif
 	NSData *data;
 	@try {
 		data = [handle readDataToEndOfFile];

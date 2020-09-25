@@ -1,5 +1,5 @@
 //
-//  PBGitGrapher.m
+//  PBGitGrapher.mm
 //  GitX
 //
 //  Created by Pieter de Bie on 17-06-08.
@@ -29,18 +29,18 @@ using namespace std;
 
 void add_line(struct PBGitGraphLine *lines, int *nLines, int upper, int from, int to, int index)
 {
-	// TODO: put in one thing
+	// TODO: put in one thing:
 	struct PBGitGraphLine a = { upper, from, to, index };
 	lines[(*nLines)++] = a;
 }
 
 - (void) decorateCommit: (PBGitCommit *) commit
 {
-	int i = 0, newPos = -1;
+    int i = 0, newPos = -1;
 	std::list<PBGitLane *> *currentLanes = new std::list<PBGitLane *>;
 	std::list<PBGitLane *> *previousLanes = (std::list<PBGitLane *> *)pl;
 
-	int maxLines = (previousLanes->size() + commit.nParents + 2) * 2;
+	size_t maxLines = ((previousLanes->size() + commit.nParents + 2) * 2);
 	struct PBGitGraphLine *lines = (struct PBGitGraphLine *)malloc(sizeof(struct PBGitGraphLine) * maxLines);
 	int currentLine = 0;
 
@@ -60,7 +60,7 @@ void add_line(struct PBGitGraphLine *lines, int *nLines, int upper, int from, in
 					didFirst = YES;
 					currentLanes->push_back(*it);
 					currentLane = currentLanes->back();
-					newPos = currentLanes->size();
+					newPos = (int)currentLanes->size();
 					add_line(lines, &currentLine, 1, i, newPos,(*it)->index());
 					if (commit.nParents)
 						add_line(lines, &currentLine, 0, newPos, newPos,(*it)->index());
@@ -73,8 +73,10 @@ void add_line(struct PBGitGraphLine *lines, int *nLines, int upper, int from, in
 			else {
 				// We are not this commit.
 				currentLanes->push_back(*it);
-				add_line(lines, &currentLine, 1, i, currentLanes->size(),(*it)->index());
-				add_line(lines, &currentLine, 0, currentLanes->size(), currentLanes->size(), (*it)->index());
+				add_line(lines, &currentLine, 1, i, (int)currentLanes->size(),
+                         (*it)->index());
+				add_line(lines, &currentLine, 0, (int)currentLanes->size(),
+                         (int)currentLanes->size(), (*it)->index());
 			}
 			// For existing columns, we always just continue straight down
 			// ^^ I don't know what that means anymore :(
@@ -87,7 +89,7 @@ void add_line(struct PBGitGraphLine *lines, int *nLines, int upper, int from, in
 	if (!didFirst && currentLanes->size() < MAX_LANES && commit.nParents) {
 		PBGitLane *newLane = new PBGitLane(commit.parentShas);
 		currentLanes->push_back(newLane);
-		newPos = currentLanes->size();
+		newPos = (int)currentLanes->size();
 		add_line(lines, &currentLine, 0, newPos, newPos, newLane->index());
 	}
 
@@ -121,21 +123,22 @@ void add_line(struct PBGitGraphLine *lines, int *nLines, int upper, int from, in
 		addedParent = YES;
 		PBGitLane *newLane = new PBGitLane(parent);
 		currentLanes->push_back(newLane);
-		add_line(lines, &currentLine, 0, currentLanes->size(), newPos, newLane->index());
+		add_line(lines, &currentLine, 0, (int)currentLanes->size(), newPos,
+                 newLane->index());
 	}
 
 	previous = [[PBGraphCellInfo alloc] initWithPosition:newPos andLines:lines];
 	if (currentLine > maxLines)
-		NSLog(@"Number of lines: %i vs allocated: %i", currentLine, maxLines);
+		NSLog(@"Number of lines: %i vs allocated: %zu", currentLine, maxLines);
 
 	previous.nLines = currentLine;
 	previous.sign = commit.sign;
 
 	// If a parent was added, we have room to not indent.
 	if (addedParent)
-		previous.numColumns = currentLanes->size() - 1;
+		previous.numColumns = (int)(currentLanes->size() - 1);
 	else
-		previous.numColumns = currentLanes->size();
+		previous.numColumns = (int)currentLanes->size();
 
 	// Update the current lane to point to the new parent
 	if (currentLane && commit.nParents > 0)

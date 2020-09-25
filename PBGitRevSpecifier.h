@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <PBGitRef.h>
+#import "PBGitRef.h"
 
 @interface PBGitRevSpecifier : NSObject {
 	NSString *description;

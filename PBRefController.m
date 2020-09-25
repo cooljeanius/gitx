@@ -39,7 +39,9 @@
 {
 	NSString *ref_desc = [NSString stringWithFormat:@"%@ %@", [[sender ref] type], [[sender ref] shortName]];
 	NSString *question = [NSString stringWithFormat:@"Are you sure you want to remove the %@?", ref_desc];
-	int choice = NSRunAlertPanel([NSString stringWithFormat:@"Delete %@?", ref_desc], question, @"Delete", @"Cancel", nil);
+	NSInteger choice = NSRunAlertPanel([NSString stringWithFormat:@"Delete %@?",
+                                        ref_desc], question, @"Delete",
+                                       @"Cancel", nil);
 	// TODO: Use a non-modal alert here, so we don't block all the GitX windows
 
 	if(choice) {
@@ -90,19 +92,21 @@
 - (BOOL)tableView:(NSTableView *)tv writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard*)pboard
 {
 	NSPoint location = [tv convertPointFromBase:[(PBCommitList *)tv mouseDownPoint]];
-	int row = [tv rowAtPoint:location];
-	int column = [tv columnAtPoint:location];
+	NSInteger row = [tv rowAtPoint:location];
+	NSInteger column = [tv columnAtPoint:location];
 	if (column != 0)
 		return NO;
 	
-	PBGitRevisionCell *cell = (PBGitRevisionCell *)[tv preparedCellAtColumn:column row:row];
+	PBGitRevisionCell *cell = (PBGitRevisionCell *)[tv preparedCellAtColumn:column
+                                                                        row:row];
 	
 	int index = [cell indexAtX:location.x];
 	
 	if (index == -1)
 		return NO;
 	
-	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:row], [NSNumber numberWithInt:index], NULL]];
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:(int)row],
+                                                                [NSNumber numberWithInt:index], NULL]];
 	[pboard declareTypes:[NSArray arrayWithObject:@"PBGitRef"] owner:self];
 	[pboard setData:data forType:@"PBGitRef"];
 	
@@ -145,11 +149,12 @@
 	
 	PBGitCommit *dropCommit = [[commitController arrangedObjects] objectAtIndex:row];
 	
-	int a = [[NSAlert alertWithMessageText:@"Change branch"
-							 defaultButton:@"Change"
-						   alternateButton:@"Cancel"
-							   otherButton:nil
-				 informativeTextWithFormat:@"Do you want to change branch\n\n\t'%@'\n\n to point to commit\n\n\t'%@'", [ref shortName], [dropCommit subject]] runModal];
+	NSModalResponse a = [[NSAlert alertWithMessageText:@"Change branch"
+                                         defaultButton:@"Change"
+                                       alternateButton:@"Cancel"
+                                           otherButton:nil
+                             informativeTextWithFormat:@"Do you want to change branch\n\n\t'%@'\n\n to point to commit\n\n\t'%@'",
+                          [ref shortName], [dropCommit subject]] runModal];
 	if (a != NSAlertDefaultReturn)
 		return NO;
 	

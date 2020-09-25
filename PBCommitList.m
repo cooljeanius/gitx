@@ -58,8 +58,8 @@
 								  offset:(NSPointPointer)dragImageOffset
 {
 	NSPoint location = [self convertPointFromBase:mouseDownPoint];
-	int row = [self rowAtPoint:location];
-	int column = [self columnAtPoint:location];
+	NSInteger row = [self rowAtPoint:location];
+	NSInteger column = [self columnAtPoint:location];
 	PBGitRevisionCell *cell = (PBGitRevisionCell *)[self preparedCellAtColumn:column row:row];
 
 	int index = [cell indexAtX:location.x];

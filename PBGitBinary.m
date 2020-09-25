@@ -37,7 +37,7 @@ static NSString* gitPath = nil;
 	if (!version)
 		return NO;
 
-	int c = [version compare:@"" MIN_GIT_VERSION];
+	NSComparisonResult c = [version compare:@"" MIN_GIT_VERSION];
 	if (c == NSOrderedSame || c == NSOrderedDescending) {
 		gitPath = path;
 		return YES;

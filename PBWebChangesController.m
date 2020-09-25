@@ -37,7 +37,7 @@
 {
 	NSArrayController *otherController;
 	otherController = object == unstagedFilesController ? cachedFilesController : unstagedFilesController;
-	int count = [[object selectedObjects] count];
+	NSUInteger count = [[object selectedObjects] count];
 	if (count == 0) {
 		if([[otherController selectedObjects] count] == 0 && selectedFile) {
 			selectedFile = nil;
@@ -87,7 +87,7 @@
 
 - (void)discardHunk:(NSString *)hunk altKey:(BOOL)altKey
 {
-	int ret = NSAlertDefaultReturn;
+	NSModalResponse ret = NSAlertDefaultReturn;
 	if (!altKey) {
 		ret = [[NSAlert alertWithMessageText:@"Discard hunk"
 			defaultButton:nil
