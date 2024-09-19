@@ -14,7 +14,7 @@ String.prototype.escapeHTML = function() {
 };
 
 String.prototype.unEscapeHTML = function() {
-  return this.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  return this.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 };
 
 Element.prototype.toggleDisplay = function() {
